@@ -1,28 +1,32 @@
-package awesomeProject
+package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 )
 
-const portNumber = ":9000"
+const portNumber = ":8080"
 
 // Home returns the Home Page
 func Home(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "This is the homepage")
+	renderTemplate(w, "home.page.tmpl")
 }
 
-// About returns the About Page
-func About(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "This is the about page")
+func renderTemplate(w http.ResponseWriter, tmpl string) {
+	parsedTemplate, _ := template.ParseFiles("./templates/" + tmpl)
+	err := parsedTemplate.Execute(w, nil)
+	if err != nil {
+		fmt.Println("Error parsing template")
+		return
+	}
 }
 
 func main() {
 
 	http.HandleFunc("/", Home)
-	http.HandleFunc("/", About)
 
-	fmt.Println("Starting App on port 9000...")
+	fmt.Println("Starting App on port 8080...")
 	_ = http.ListenAndServe(portNumber, nil)
 
 }
